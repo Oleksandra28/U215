@@ -18,31 +18,32 @@ def getRequiredRepresentation(tour):
         result.append(edge[1])
     return result
 
-def getUnexploredEdges(endNode, graph):
+def getUnexploredEdge(endNode, graph):
     unexploredEdges = (unexploredEdge for unexploredEdge in graph
                        if endNode == unexploredEdge[0] or endNode == unexploredEdge[1])
     result = list(unexploredEdges)
-    print ("unexplored edges: ", result)
-    return result
+    if len(result) == 0:
+        return ()
+    else:
+        return result.pop()
 
 def find_eulerian_tour_internal(beginNode, tour, graph):
-    unexploredEdges = getUnexploredEdges(beginNode, graph)
-    if len(unexploredEdges) == 0:
+    unexploredEdge = getUnexploredEdge(beginNode, graph)
+    print ("internal, edge:", unexploredEdge)
+    if unexploredEdge == ():
         return tour
-    edge = unexploredEdges[0]
-    print ("edge:", edge)
-    beginN = edge[0]
-    endN = edge[1]
-    tour.append(edge)
-    graph.remove(edge)
-    find_eulerian_tour_internal(endN, tour, graph)
+    graph.remove(unexploredEdge)
+    # reverse the edge
+    if unexploredEdge[1] == beginNode:
+        unexploredEdge = (unexploredEdge[1], unexploredEdge[0])
+    find_eulerian_tour_internal(unexploredEdge[1], tour, graph)
+    tour.append(unexploredEdge)
 
 def find_eulerian_tour(graph):
     tour = []
     edge = graph.pop()
     beginNode = edge[0]
     endNode = edge[1]
-    print ("edge:", edge)
     tour.append(edge)
     find_eulerian_tour_internal(endNode, tour, graph)
     if tour[len(tour)-1][0] == beginNode or tour[len(tour)-1][1] == beginNode:
@@ -54,6 +55,6 @@ if __name__ == "__main__":
     tour = find_eulerian_tour( [(1, 2), (2, 3), (3, 1)])
     print (tour)
     print ("===========================================")
-    tour = find_eulerian_tour( [(1, 2), (1, 3), (1, 5), (1, 6), (2, 6), (2, 4), (2, 5), (3, 4)])
+    #tour = find_eulerian_tour( [(1, 2), (1, 3), (1, 5), (1, 6), (2, 6), (2, 4), (2, 5), (3, 4)])
     tour = find_eulerian_tour([(0, 1), (1, 5), (1, 7), (4, 5), (4, 8), (1, 6), (3, 7), (5, 9), (2, 4), (0, 4), (2, 5), (3, 6), (8, 9)])
     print (tour)
